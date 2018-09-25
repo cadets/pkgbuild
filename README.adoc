@@ -38,18 +38,6 @@ $ openssl genrsa -aes128 -out my-signing-key.key 4096
 $ openssl rsa -in my-signing-key.key -out my-signing-key.pub -pubout
 ----
 
-Then save its SHA-256 fingerprint to a file, e.g.:
-
-[source,console]
-----
-$ sha256 -q my-signing-key.key
-7dce0a1307a608b7809e13e8354deebcd1a50d7355b2eac6ecae12bc3f9e9077
-$ cat > my-signing-key.TODAYSDATE <<EOF
-function: "sha256"
-fingerprint: "7dce0a1307a608b7809e13e8354deebcd1a50d7355b2eac6ecae12bc3f9e9077"
-EOF
-----
-
 
 === Create repository metadata
 
@@ -108,11 +96,10 @@ with the contents:
 ----
 my-package-repo-name: {
     url: "https://servername.example.com/packages/${ABI}/latest",
-    signature_type: "fingerprints",
-    fingerprints: "/usr/local/share/keys/pkg",
+    signature_type: "pubkey",
+    pubkey: "/usr/local/etc/pkg/my-signing-key.pub",
     enabled: yes,
 }
 ----
 
-and install your <<Create a signing key,key fingerprint file>>
-in `/usr/share/keys/pkg/trusted`.
+and install your <<public key>> in `/usr/local/etc/pkg/`.
