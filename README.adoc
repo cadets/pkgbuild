@@ -1,0 +1,118 @@
+= pkgbuild
+
+== Scripts to help build and deploy package repositories
+
+The steps required to deploy a package repository are:
+
+1. build your packages,
+2. [optionally] create a signing key,
+3. create repository metadata,
+4. deploy your repository files and
+5. configure your clients to use the new repository.
+
+=== Build your packages
+
+The preferred method of building packages is with
+https://www.freebsd.org/doc/handbook/ports-poudriere.html[Poudriere],
+but if you prefer to build things more manually, you can:
+
+1. check out a ports tree (e.g., the
+   https://github.com/cadets/freebsd-ports[CADETS ports tree]),
+2. set `PORTSDIR` to the path of your ports tree,
+3. set `PORT_DBDIR` to an empty directory somewhere on your system,
+4. create an empty `packages` directory within `${PORTSDIR}` and then
+5. run `make package` within the ports you need.
+
+The result should be a set of packages (e.g., `git-2.18.0_1.txz`) in the
+`${PORTSDIR}/packages/All` directory.
+
+=== Create a signing key
+
+It's a good idea to sign your package repositories to ensure that the packages
+haven't been manipulated in-flight.
+You can create a signing keypair by running:
+
+[source,console]
+----
+$ openssl genrsa -aes128 -out my-signing-key.key 4096
+$ openssl rsa -in my-signing-key.key -out my-signing-key.pub -pubout
+----
+
+Then save its SHA-256 fingerprint to a file, e.g.:
+
+[source,console]
+----
+$ sha256 -q my-signing-key.key
+7dce0a1307a608b7809e13e8354deebcd1a50d7355b2eac6ecae12bc3f9e9077
+$ cat > my-signing-key.TODAYSDATE <<EOF
+function: "sha256"
+fingerprint: "7dce0a1307a608b7809e13e8354deebcd1a50d7355b2eac6ecae12bc3f9e9077"
+EOF
+----
+
+
+=== Create repository metadata
+
+The link:build[] script can be used to create the package-repository metadata
+that https://github.com/freebsd/pkg[pkg] needs to install packages.
+
+[source,console]
+----
+$ ./build ${PORTSDIR}/packages /path/to/my-signing-key.key
+----
+
+This will generate files such as `meta.txz` and `packagesite.txz`
+within the `${PORTSDIR}/packages` directory that describe which packages are
+available in the repository, as well as a `digests.txz` that is used for
+package integrity verification.
+
+
+=== Deploy your repository files
+
+Create a directory on your webserver to hold the packages.
+Ensure that your SSH configuration is set up to be able to run
+`ssh myservername "echo 'success'"`, then use the link:deploy[] script
+to sync your packages to the server:
+
+[source,console]
+----
+$ ./deploy ${PORTSDIR}/packages servername /path/to/www/dir/on/server
+Creating servername:/path/to/[...]/FreeBSD:12:amd64/2018-09-25-1522 ...
+Synchronizing from /path/to/packages to servername...
+./
+digests.txz
+meta.txa
+packagesite.txz
+All/
+All/alsa-lib-1.1.2_1.txz
+[...]
+----
+
+This script does more than just rsync the files over.
+It also creates a directory structure that 
+https://github.com/freebsd/pkg[pkg] expects, including an ABI description
+(`FreeBSD:12:$(sysctl -n hw.machine_arch)`) and the timestamp of the repository.
+This timestamp is derived from the last modification time of the
+`${PORTSDIR}/packages/All` directory, which should be the most recent time that
+a package was placed in that directory.
+The script also, after syncing the files into this directory structure,
+creates a `latest` symlink for the convenience of client configuration.
+
+
+==== Configure clients
+
+On each client machine, create a file `/usr/local/etc/pkg/repos/my-repo.conf`
+with the contents:
+
+[source,yaml]
+----
+my-package-repo-name: {
+    url: "https://servername.example.com/packages/${ABI}/latest",
+    signature_type: "fingerprints",
+    fingerprints: "/usr/local/share/keys/pkg",
+    enabled: yes,
+}
+----
+
+and install your <<Create a signing key,key fingerprint file>>
+in `/usr/share/keys/pkg/trusted`.

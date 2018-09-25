@@ -1,0 +1,28 @@
+#!/bin/sh
+
+package_dir=$1
+key_file=$2
+
+if [ "${package_dir}" = "" ]
+then
+	echo "Usage:  $0 <package directory> [signing key]"
+	exit 1
+fi
+
+if ! [ -d "${package_dir}" ]
+then
+	echo "${package_dir} is not a directory!"
+	exit 1
+fi
+
+if [ "${key_file}" == "" ]
+then
+	echo "Warning: no signing key specified, proceeding without signatures"
+
+elif ! [ -e "${key_file}" ]
+then
+	echo "${key_file} does not exist!"
+	exit 1
+fi
+
+pkg repo ${package_dir} ${key_file}

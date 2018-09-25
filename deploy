@@ -1,0 +1,41 @@
+#!/bin/sh
+
+package_dir=$1
+server=$2
+remote_dir=$3
+
+if [ "${package_dir}" = "" ] || [ "${server}" = "" ] || [ "${remote_dir}" = "" ]
+then
+	echo "Usage:  $0 <package directory> <server> <directory>"
+	echo "  e.g., $0 ../../ports/packages servername /var/www/packages"
+	exit 1
+fi
+
+if ! [ -d "${package_dir}" ]
+then
+	echo "${package_dir} is not a directory!"
+	exit 1
+fi
+
+if ! [ -d "${package_dir}/All" ]
+then
+	echo "${package_dir} contains no 'All' directory!"
+	exit 1
+fi
+
+abi=`sysctl -n hw.machine_arch`
+abi_dir="${remote_dir}/FreeBSD:12:${abi}"
+date=`stat -f '%Sm' -t '%Y-%m-%d-%H%M' ${package_dir}/All`
+path="${abi_dir}/${date}"
+
+echo "Creating ${server}:${path} ..."
+ssh ${server} "mkdir -p ${path}" || exit 1
+
+echo "Synchronizing from ${package_dir} to ${server} ..."
+rsync -avz -e ssh ${package_dir}/ ${server}:${path}/ || exit 1
+
+echo "Symlinking 'latest' to ${date} ..."
+ssh ${server} "rm -f ${abi_dir}/latest" || true
+ssh ${server} "ln -sf ${date} ${abi_dir}/latest" || exit 1
+
+echo "Packages sync'ed to ${server}:${abi_dir}/latest"
