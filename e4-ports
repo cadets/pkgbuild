@@ -1,0 +1,11 @@
+devel/avro-cpp
+devel/boost-libs
+devel/git
+devel/googletest
+devel/maven
+java/openjdk8
+lang/python27
+lang/python36
+net/librdkafka
+security/sudo
+shells/bash
