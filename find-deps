@@ -14,6 +14,8 @@ for port in $*
 do
 	>&2 echo ""
 	>&2 echo "${port} depends on:"
+
+	echo "${port}" >> ${tmpfile}
 	make -C ${PORTSDIR}/${port} all-depends-list \
 		| sed "s#${PORTSDIR}/##" \
 		| (>&2 tee -a ${tmpfile}) \
