@@ -2,28 +2,31 @@
 
 if [ "${PORTSDIR}" = "" ]
 then
-	echo "PORTSDIR must be set"
+	>&2 echo "PORTSDIR must be set"
 	exit 1
 fi
 
 tmpfile=`mktemp -t portdeps`
 
-echo "Finding dependencies of $*"
+(>&2 echo "Finding dependencies of $*")
 
 for port in $*
 do
-	echo ""
-	echo "${port} depends on:"
+	>&2 echo ""
+	>&2 echo "${port} depends on:"
 	make -C ${PORTSDIR}/${port} all-depends-list \
 		| sed "s#${PORTSDIR}/##" \
-		| tee -a ${tmpfile} \
+		| (>&2 tee -a ${tmpfile}) \
 		|| exit 1
 done
 
 depsfile=`mktemp -t port-dependencies`
-cat ${tmpfile} | sort | uniq > ${depsfile}
+cat ${tmpfile} \
+	| sort \
+	| uniq \
+	| tee -a ${depsfile} \
+	| (>&2 echo "`wc -l` unique dependencies")
 
-echo "`wc -l ${depsfile}` unique dependencies:"
 cat ${depsfile}
 
 rm -f ${depsfile}
