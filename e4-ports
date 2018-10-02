@@ -19,6 +19,7 @@ devel/maven33
 devel/ninja
 devel/py-pip
 devel/py-setuptools
+devel/zookeeper
 editors/emacs
 editors/vim
 ftp/curl
