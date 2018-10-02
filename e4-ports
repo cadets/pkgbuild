@@ -37,6 +37,7 @@ net/librdkafka
 net/librdkafka
 security/sudo
 shells/bash
+shells/fish
 shells/zsh
 sysutils/coreutils
 sysutils/htop
