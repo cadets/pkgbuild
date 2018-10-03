@@ -25,7 +25,6 @@ editors/vim
 ftp/curl
 ftp/wget
 java/openjdk8
-java/openjdk8
 lang/php56
 lang/python27
 lang/python3
