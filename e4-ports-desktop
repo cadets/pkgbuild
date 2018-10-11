@@ -103,6 +103,7 @@ sysutils/xfce4-mount-plugin
 sysutils/xfce4-netload-plugin
 textproc/colordiff
 textproc/jq
+textproc/meld
 textproc/py-pygments
 textproc/rubygem-asciidoctor
 textproc/sassc
