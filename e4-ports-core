@@ -33,7 +33,6 @@ mail/postfix
 net/kafka
 net/kafkacat
 net/librdkafka
-net/librdkafka
 ports-mgmt/poudriere
 security/sudo
 shells/bash
