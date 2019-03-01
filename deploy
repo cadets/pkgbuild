@@ -23,8 +23,13 @@ then
 	exit 1
 fi
 
-abi=`sysctl -n hw.machine_arch`
-abi_dir="${remote_dir}/FreeBSD:12:${abi}"
+# Assume that the build and target architecture are the same:
+architecture=`sysctl -n hw.machine_arch`
+
+# Get the build jail version:
+major_version=`cat ${package_dir}/.jailversion | awk -F. '{ print $1 }'`
+
+abi_dir="${remote_dir}/FreeBSD:${major_version}:${architecture}"
 date=`stat -f '%Sm' -t '%Y-%m-%d-%H%M' ${package_dir}/All`
 path="${abi_dir}/${date}"
 
