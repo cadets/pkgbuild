@@ -21,7 +21,7 @@ devel/py-pip
 devel/py-setuptools
 devel/zookeeper
 editors/emacs
-editors/vim
+editors/vim-console
 ftp/curl
 ftp/wget
 java/openjdk8
