@@ -37,7 +37,8 @@ echo "Creating ${server}:${path} ..."
 ssh ${server} "mkdir -p ${path}" || exit 1
 
 echo "Synchronizing from ${package_dir} to ${server} ..."
-rsync -avz -e ssh ${package_dir}/ ${server}:${path}/ || exit 1
+to_sync=`find ${package_dir} -mindepth 1 -maxdepth 1 -not -name '.building'`
+rsync -avz -e ssh ${to_sync} ${server}:${path}/ || exit 1
 
 echo "Symlinking 'latest' to ${date} ..."
 ssh ${server} "rm -f ${abi_dir}/latest" || true
