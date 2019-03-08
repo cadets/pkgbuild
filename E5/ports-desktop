@@ -108,6 +108,7 @@ textproc/py-pygments
 textproc/rubygem-asciidoctor
 textproc/sassc
 textproc/wdiff
+www/chromium
 www/firefox
 www/gohugo
 www/links
