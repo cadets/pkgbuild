@@ -34,7 +34,7 @@ devel/py-docopt
 devel/py-humanize
 devel/py-inflect
 devel/py-jenkins-job-builder
-devel/py-pip
+devel/py-pip@all
 devel/py-setuptools
 devel/xtoolchain-llvm60
 devel/youcompleteme

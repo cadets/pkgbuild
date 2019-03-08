@@ -17,7 +17,7 @@ devel/m4
 devel/maven
 devel/maven33
 devel/ninja
-devel/py-pip
+devel/py-pip@all
 devel/py-setuptools
 devel/zookeeper
 editors/emacs
