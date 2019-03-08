@@ -137,8 +137,11 @@ x11-themes/greybird-theme
 x11-themes/gtk-arc-themes
 x11-toolkits/py-tkinter
 x11-wm/devilspie
+x11-wm/enlightenment
+x11-wm/lxqt
 x11-wm/transset
 x11-wm/xfce4
+x11/lxde-meta
 x11/screen-message
 x11/wmctrl
 x11/xclip
