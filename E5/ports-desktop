@@ -71,6 +71,7 @@ net/kafka
 net/kafkacat
 net/librdkafka
 net/rsync
+net-im/profanity
 ports-mgmt/dialog4ports
 ports-mgmt/pkg
 ports-mgmt/portlint
